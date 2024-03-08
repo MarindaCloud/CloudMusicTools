@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:music_tools/components/custom_card.dart';
+import 'package:music_tools/enum/assets_enum.dart';
 import 'package:music_tools/global/bottom_nav.dart';
+import 'package:music_tools/global/netase_music_search.dart';
 import 'package:music_tools/utils/font_rpx.dart';
+import 'package:music_tools/view/netase_music_cloud/logic.dart';
 import 'package:music_tools/view/netase_music_cloud/view.dart';
 
+import '../netase_music_cloud/components/music_search/logic.dart';
 import 'state.dart';
 
 class IndexLogic extends GetxController with GetSingleTickerProviderStateMixin {
@@ -79,105 +84,13 @@ class IndexLogic extends GetxController with GetSingleTickerProviderStateMixin {
               children: [
                 //卡片方案布局
                 Expanded(
-                  child: InkWell(
-                    onTap: () => changeContentWidget(NetaseMusicCloudPage()),
-                    child: Container(
-                      padding: EdgeInsets.only(
-                          top: 20.rpx, bottom: 20, right: 10.rpx, left: 10.rpx),
-                      height: 300.rpx,
-                      decoration:
-                          BoxDecoration(color: Colors.white38, boxShadow: [
-                        BoxShadow(
-                            color: Colors.black.withOpacity(.1),
-                            offset: Offset(5, 5),
-                            blurRadius: 10,
-                            blurStyle: BlurStyle.solid),
-                      ]),
-                      child: Column(
-                        children: [
-                          Container(
-                            margin:
-                                EdgeInsets.only(bottom: 30.rpx, top: 30.rpx),
-                            child: SizedBox(
-                              width: 100.rpx,
-                              height: 100.rpx,
-                              child: Image.asset(
-                                "assets/music.png",
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 10.rpx),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  child: Text(
-                                    "网易云音乐在线解析",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                  child: CustomCard("网易云音乐解析",Assets.music.assets,()=>changeContentWidget(NetaseMusicCloudPage())),
                 ),
                 SizedBox(
                   width: 100.rpx,
                 ),
                 Expanded(
-                  child: InkWell(
-                    onTap: () => print("全民K歌"),
-                    child: Container(
-                      padding: EdgeInsets.only(
-                          top: 20.rpx, bottom: 20, right: 10.rpx, left: 10.rpx),
-                      height: 300.rpx,
-                      decoration:
-                          BoxDecoration(color: Colors.white38, boxShadow: [
-                        BoxShadow(
-                            color: Colors.black.withOpacity(.1),
-                            offset: Offset(5, 5),
-                            blurRadius: 10,
-                            blurStyle: BlurStyle.solid),
-                      ]),
-                      child: Column(
-                        children: [
-                          Container(
-                            margin:
-                                EdgeInsets.only(bottom: 30.rpx, top: 30.rpx),
-                            child: SizedBox(
-                              width: 100.rpx,
-                              height: 100.rpx,
-                              child: Image.asset(
-                                "assets/music2.png",
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 10.rpx),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  child: Text(
-                                    "全民K歌在线解析",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                  child: CustomCard("全民K歌解析",Assets.music2.assets,()=>print("全民K歌"))
                 ),
               ],
             ),

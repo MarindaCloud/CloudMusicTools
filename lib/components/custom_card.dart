@@ -7,13 +7,12 @@ import 'package:music_tools/utils/font_rpx.dart';
  * @description 自定义的卡片组件
  */
 class CustomCard extends StatelessWidget{
-  Widget child;
   Color? textColor;
   Function onTap;
   double? height;
   String assets;
   String? text;
-  CustomCard(this.text,this.assets,this.child,this.onTap,{this.height,this.textColor,super.key});
+  CustomCard(this.text,this.assets,this.onTap,{this.height,this.textColor,super.key});
 
   @override
   Widget build(BuildContext context) {
