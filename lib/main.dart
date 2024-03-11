@@ -3,13 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:music_tools/global/app_pages.dart';
 import 'package:music_tools/utils/font_rpx.dart';
 import 'package:music_tools/utils/log.dart';
+import 'package:music_tools/utils/overlay_manager.dart';
 void main() async{
   initSetting();
-  MediaKit.ensureInitialized();
   await Log.initLogger();
   runApp(const MyApp());
 }
@@ -29,6 +28,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      builder: BotToastInit(),
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       navigatorObservers: [BotToastNavigatorObserver()],
@@ -43,4 +43,5 @@ initSetting() async{
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   await GetStorage.init();
+  Get.put(OverlayManager());
 }

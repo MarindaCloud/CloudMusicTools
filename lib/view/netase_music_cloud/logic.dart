@@ -1,6 +1,6 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
 import 'package:music_tools/utils/overlay_manager.dart';
-import 'package:music_tools/view/play/logic.dart';
 
 import 'state.dart';
 
@@ -15,7 +15,6 @@ class NetaseMusicCloudLogic extends GetxController {
 
   @override
   void onClose() {
-
     // TODO: implement onClose
     super.onClose();
   }

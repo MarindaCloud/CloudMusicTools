@@ -1,9 +1,15 @@
+import 'dart:typed_data';
+
+import 'package:audioplayers/audioplayers.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_tools/components/custom_card.dart';
 import 'package:music_tools/enum/assets_enum.dart';
+import 'package:music_tools/enum/request_type.dart';
 import 'package:music_tools/global/bottom_nav.dart';
 import 'package:music_tools/global/netase_music_search.dart';
+import 'package:music_tools/network/base_provider.dart';
 import 'package:music_tools/utils/font_rpx.dart';
 import 'package:music_tools/view/netase_music_cloud/logic.dart';
 import 'package:music_tools/view/netase_music_cloud/view.dart';
@@ -16,6 +22,7 @@ class IndexLogic extends GetxController with GetSingleTickerProviderStateMixin {
 
   @override
   void onInit() {
+    // test();
     initBottomInfo();
     state.contentWidget.value = buildContentWidget();
     state.controller =
@@ -32,6 +39,21 @@ class IndexLogic extends GetxController with GetSingleTickerProviderStateMixin {
       BottomNav(text: "设置", iconData: Icons.settings, index: 2),
       BottomNav(text: "我的", iconData: Icons.person, index: 3),
     ];
+  }
+  
+  test() async{
+    var data = "http://m701.music.126.net/20240311140732/5adecf46e221ec2b786c5df124671d07/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/14096409750/c03d/febc/44e4/75fd37e0a1749f30e7cb0b58cde89154.mp3";
+    // var data = "http://m701.music.126.net/20240311113556/3e587768a8afa983018fcc07c3b51c19/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/14096409750/c03d/febc/44e4/75fd37e0a1749f30e7cb0b58cde89154.mp3";
+    var header = {
+      "Accept": "*/*",
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+      "Accept-Encoding": "gzip, deflate",
+      "Accept-Language": "zh-CN,zh;q=0.9",
+      "Connection": "keep-alive"
+    };
+    AudioPlayer player = AudioPlayer();
+    player.play(UrlSource(data));
+    ResponseBody response =  await BaseProvider.sendRequestStream(RequestType.normal, data,header: header);
   }
 
   /*

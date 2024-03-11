@@ -15,6 +15,13 @@ class BaseProvider {
 
   static sendRequestTypeGet(RequestType type,dynamic data,{Map<String,dynamic>? header}){
    String path = "${type.path}${data}";
-   return Request.sendGet(path,header: header);
+   print('path: ${path}');
+    return Request.sendGet(path,header: header);
+  }
+
+  static sendRequestStream(RequestType type,dynamic data,{Map<String,dynamic>? header}){
+    String path = "${type.path}${data}";
+    print('path: ${path}');
+    return Request.sendGet(path,header: header,isStream: true);
   }
  }

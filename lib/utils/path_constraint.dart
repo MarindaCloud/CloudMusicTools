@@ -20,14 +20,32 @@ class PathConstraint{
   static Future<Directory> getBaseDirPath() async{
     final Directory? dbFolder;
     if(GetPlatform.isAndroid) {
-      dbFolder = await  getExternalStorageDirectory();
+      dbFolder = await getExternalStorageDirectory();
     }
     else if(GetPlatform.isIOS) {
-      dbFolder = await  getApplicationDocumentsDirectory();
+      dbFolder = await getApplicationDocumentsDirectory();
     }
     else {
       dbFolder = await getApplicationSupportDirectory();
     }
     return dbFolder!;
+  }
+
+  /*
+   * @author Marinda
+   * @date 2024/3/11 16:27
+   * @description 获取临时目录
+   */
+  static Future<Directory> getTempDirPath() async{
+    return getTemporaryDirectory();
+  }
+
+  /*
+   * @author Marinda
+   * @date 2024/3/11 16:29
+   * @description 获取应用缓存目录
+   */
+  static Future<Directory> getApplicationCacheDirPath() async{
+    return getApplicationCacheDirectory();
   }
 }

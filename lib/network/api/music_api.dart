@@ -16,14 +16,14 @@ class MusicAPI{
    * @date 2024/3/8 17:09
    * @description 发送网易云解析请求
    */
-  static sendMusicAnalysis(String searchContent) async{
+  static sendMusicAnalysis(String searchContent,String type) async{
     Map<String,dynamic> headers = {
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
       "X-Requested-With": "XMLHttpRequest"
     };
     Map<String,dynamic> data = {
       "input": searchContent,
-      "filter": "name",
+      "filter": "${type}",
       "type": "netease",
       "page": "1"
     };

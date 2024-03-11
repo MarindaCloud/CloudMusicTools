@@ -14,24 +14,29 @@ class Request {
   // 配置 Dio 实例
   static final BaseOptions _options = BaseOptions(
     connectTimeout: 5000,
-    receiveTimeout: 3000,
+    receiveTimeout: 5000,
   );
 
   // 创建 Dio 实例
   static final Dio _dio = Dio(_options);
 
 
+
   // _request 是核心函数，所有的请求都会走这里
   static Future<T> _request<T>(String path,
-      {required String method, Map<String,dynamic>? headers,  data}) async {
+      {required String method, Map<String,dynamic>? headers,  data,bool? isStream = false}) async {
     Log.i('请求地址$path');
     Log.i('发送的数据为：$data');
     try {
+      Options options = Options(
+          method: method,
+          headers: headers,
+      );
+      if(isStream == true){
+        options.responseType = ResponseType.stream;
+      }
       Response response = await _dio.request(path,
-          data: data, options: Options(
-              method: method,
-            headers: headers
-          ));
+          data: data, options: options);
       if (response.statusCode == 200) {
         try {
           return response.data;
@@ -61,8 +66,8 @@ class Request {
    * @date 2024/3/8 16:40
    * @description post请求
    */
-  static Future<dynamic> sendPost(String path,dynamic data,{Map<String,dynamic>? header}){
-    return _request(path, method: "post",headers: header,data:data);
+  static Future<dynamic> sendPost(String path,dynamic data,{Map<String,dynamic>? header,bool? isStream}){
+    return _request(path, method: "POST",headers: header,data:data,isStream: isStream);
   }
 
   /*
@@ -70,8 +75,8 @@ class Request {
    * @date 2024/3/8 16:40
    * @description post请求
    */
-  static Future<dynamic> sendGet(String path,{Map<String,dynamic>? header}){
-    return _request(path, method: "get",headers: header);
+  static Future<dynamic> sendGet(String path,{Map<String,dynamic>? header,bool? isStream}){
+    return _request(path, method: "GET",headers: header,isStream: isStream);
   }
 
   // 处理 Dio 异常
