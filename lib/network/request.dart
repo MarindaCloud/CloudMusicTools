@@ -13,8 +13,8 @@ import '../utils/log.dart';
 class Request {
   // 配置 Dio 实例
   static final BaseOptions _options = BaseOptions(
-    connectTimeout: 5000,
-    receiveTimeout: 5000,
+    connectTimeout: 10000,
+    receiveTimeout: 10000,
   );
 
   // 创建 Dio 实例

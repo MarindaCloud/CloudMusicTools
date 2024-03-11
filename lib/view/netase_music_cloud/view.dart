@@ -22,7 +22,6 @@ class NetaseMusicCloudPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
       return Container(
         width: Get.width,
         height: Get.height,
@@ -57,24 +56,10 @@ class NetaseMusicCloudPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if(state.showSearch.value)
+                    // if(state.showSearch.value)
                       Expanded(
                         child: MusicSearchPage(),
                       ), //卡片方案布局
-                    if(!state.showSearch.value && !state.showAnalysis.value)
-                      Expanded(
-                        child: CustomCard("音乐搜索", Assets.music.assets, () =>
-                        state.showSearch.value = true),
-                      ),
-                    if(!state.showSearch.value && !state.showAnalysis.value)
-                      SizedBox(
-                        width: 100.rpx,
-                      ),
-                    if(!state.showSearch.value && !state.showAnalysis.value)
-                      Expanded(
-                          child: CustomCard("音乐解析", Assets.music.assets, () =>
-                              print("音乐解析"))
-                      ),
                   ],
                 ),
               ),
@@ -83,6 +68,5 @@ class NetaseMusicCloudPage extends StatelessWidget {
         ),
 
       );
-    });
   }
 }

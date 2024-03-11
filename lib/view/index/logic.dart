@@ -1,10 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:music_tools/components/download_progress_bar.dart';
 import 'package:music_tools/utils/log.dart';
+import 'package:music_tools/utils/overlay_manager.dart';
 import 'package:path/path.dart' as p;
 import 'package:music_tools/components/custom_card.dart';
 import 'package:music_tools/enum/assets_enum.dart';
@@ -15,17 +18,17 @@ import 'package:music_tools/network/base_provider.dart';
 import 'package:music_tools/utils/font_rpx.dart';
 import 'package:music_tools/view/netase_music_cloud/logic.dart';
 import 'package:music_tools/view/netase_music_cloud/view.dart';
+import 'package:uuid/v4.dart';
 
 import '../../utils/path_constraint.dart';
 import '../netase_music_cloud/components/music_search/logic.dart';
 import 'state.dart';
 
-class IndexLogic extends GetxController with GetSingleTickerProviderStateMixin {
+class IndexLogic extends GetxController with GetTickerProviderStateMixin {
   final IndexState state = IndexState();
 
   @override
   void onInit() {
-    testDownload();
     initBottomInfo();
     state.contentWidget.value = buildContentWidget();
     state.controller =
@@ -34,6 +37,13 @@ class IndexLogic extends GetxController with GetSingleTickerProviderStateMixin {
         .animate(state.controller!);
     // TODO: implement onInit
     super.onInit();
+  }
+
+
+  @override
+  void onReady() {
+    testDownload();
+
   }
 
   initBottomInfo() {
@@ -45,8 +55,7 @@ class IndexLogic extends GetxController with GetSingleTickerProviderStateMixin {
   }
   
   test() async{
-    var data = "http://m701.music.126.net/20240311140732/5adecf46e221ec2b786c5df124671d07/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/14096409750/c03d/febc/44e4/75fd37e0a1749f30e7cb0b58cde89154.mp3";
-    // var data = "http://m701.music.126.net/20240311113556/3e587768a8afa983018fcc07c3b51c19/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/14096409750/c03d/febc/44e4/75fd37e0a1749f30e7cb0b58cde89154.mp3";
+    var data = "http://m10.music.126.net/20240311180727/0ad7d5de9789f22891cdbc5a08cbcdab/ymusic/obj/w5zDlMODwrDDiGjCn8Ky/14055025967/5a0a/cc5d/2055/e7bc382dc04175f439e9090fcda99944.mp3";
     var header = {
       "Accept": "*/*",
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
@@ -66,12 +75,26 @@ class IndexLogic extends GetxController with GetSingleTickerProviderStateMixin {
    * @description 测试下载
    */
   testDownload() async{
-    String url = "http://m801.music.126.net/20240311170411/b379823157d980ab35b8bbdb7f3116e7/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/14096409750/c03d/febc/44e4/75fd37e0a1749f30e7cb0b58cde89154.mp3";
-    var dir = await PathConstraint.getApplicationCacheDirPath();
-    String savePath = p.join(dir.path,"123.mp3");
-    await BaseProvider.sendRequestDownload(url, savePath,onDownloadProcess: (count,total){
-      Log.i('当前下载进度为: ${count / total}');
-    });
+    String url = "http://m10.music.126.net/20240311180727/0ad7d5de9789f22891cdbc5a08cbcdab/ymusic/obj/w5zDlMODwrDDiGjCn8Ky/14055025967/5a0a/cc5d/2055/e7bc382dc04175f439e9090fcda99944.mp3";
+    // var dir = await PathConstraint.getApplicationCacheDirPath();
+    // String savePath = p.join(dir.path,"123.mp3");
+    // await BaseProvider.sendRequestDownload(url, savePath,onDownloadProcess: (count,total){
+    //   Log.i('当前下载进度为: ${count / total}');
+    // });
+    // OverlayManager().createOverlay("downloadProgress", DownloadProgressBarComponent("文件信息", 30));
+
+    // if(url == null || url == "") BotToast.showText(text: "解析异常，无法下载该文件！");
+    // var dir = await PathConstraint.getApplicationCacheDirPath();
+    // var uuid = UuidV4();
+    // var uFileName = uuid.generate();
+    // String fileName = "${uFileName}.mp3";
+    // String savePath = p.join(dir.path,fileName);
+    // Log.i("当前保存下载文件路径为：${savePath}");
+    // await BaseProvider.sendRequestDownload(url, savePath,onDownloadProcess: (count,total){
+    //   var progress = (count / total) * 100;
+    //
+    //   Log.i('当前下载进度为: ${progress}');
+    // });
   }
 
   /*

@@ -6,6 +6,7 @@ class MusicSearchState {
   AnimationController? sliderController;
   TextEditingController searchTextController = TextEditingController();
   final netaseMusicSearchList = <NetaseMusicSearch>[].obs;
+  final downloadProgress = 0.0.obs;
   MusicSearchState() {
     ///Initialize variables
   }

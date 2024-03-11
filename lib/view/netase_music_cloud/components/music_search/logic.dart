@@ -10,10 +10,16 @@ import 'package:music_tools/global/music_analysis_info.dart';
 import 'package:music_tools/network/api/music_api.dart';
 import 'package:music_tools/utils/font_rpx.dart';
 import 'package:music_tools/utils/log.dart';
-
+import 'package:path/path.dart' as p;
+import 'package:uuid/uuid.dart';
+import 'package:uuid/v4.dart';
+import '../../../../components/download_progress_bar.dart';
 import '../../../../enum/assets_enum.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../../global/netase_music_search.dart';
+import '../../../../network/base_provider.dart';
 import '../../../../utils/overlay_manager.dart';
+import '../../../../utils/path_constraint.dart';
 import 'state.dart';
 
 class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateMixin{
@@ -41,7 +47,23 @@ class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateM
    * @date 2024/3/11 15:08
    * @description 解析Music
    */
-  analysisMusic(NetaseMusicSearch element) async{ 
+  analysisMusic(NetaseMusicSearch element) async{
+    var analysisMusicInfo = await getAnalysisMusicInfo(element);
+    if(analysisMusicInfo == null){
+      BotToast.showText(text: "该音乐解析失败！"); return;
+    }
+    String picUrl = element.musicInfo?.picUrl ?? "";
+    String url = analysisMusicInfo.url ?? "";
+    String musicName = "${element.musicInfo?.name} — ${element.author?.name}";
+    OverlayManager().createOverlay("onlinePlay", AudioPlayComponent(picUrl, url,musicName));
+  }
+
+  /*
+   * @author Marinda
+   * @date 2024/3/11 17:47
+   * @description 获取
+   */
+  Future<MusicAnalysisInfo?> getAnalysisMusicInfo(NetaseMusicSearch element) async{
     int musicId = element.id ?? 0;
     var response = await MusicAPI.sendMusicAnalysis(musicId.toString(), "id");
     var result = response["data"];
@@ -49,17 +71,37 @@ class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateM
       List<MusicAnalysisInfo> list = result.map((e)=> MusicAnalysisInfo.fromJson(e)).toList();
       MusicAnalysisInfo analysisInfo = list.first;
       if(analysisInfo.url == null || analysisInfo.url == ""){
-        BotToast.showText(text: "该音乐解析失败！");
-        return;
+        return null;
       }
-      String picUrl = element.musicInfo?.picUrl ?? "";
-      String url = analysisInfo.url ?? "";
-      String musicName = "${element.musicInfo?.name} — ${element.author?.name}";
-      OverlayManager().createOverlay("onlinePlay", AudioPlayComponent(picUrl, url,musicName));
-      // Log.i("当前解析数据: ${analysisInfo.toJson()}");
+      return analysisInfo;
     }
   }
 
+  /*
+   * @author Marinda
+   * @date 2024/3/11 17:36
+   * @description 下载音乐到本地
+   */
+  downloadMusicToLocal(NetaseMusicSearch element) async{
+    var analysisMusicInfo = await getAnalysisMusicInfo(element);
+    if(analysisMusicInfo == null){
+      BotToast.showText(text: "该音乐解析失败！"); return;
+    }
+    String url = analysisMusicInfo.url ?? "";
+    if(url == null || url == "") BotToast.showText(text: "解析异常，无法下载该文件！");
+    var dir = await PathConstraint.getApplicationCacheDirPath();
+    var uuid = UuidV4();
+    var uFileName = uuid.generate();
+    String fileName = "${uFileName}.mp3";
+    String savePath = p.join(dir.path,fileName);
+    Log.i("当前保存下载文件路径为：${savePath}");
+    String musicName = "${element.musicInfo?.name} — ${element.author?.name}";
+    OverlayManager().createOverlay("downloadProgress", DownloadProgressBarComponent(musicName, state.downloadProgress,savePath));
+    await BaseProvider.sendRequestDownload(url, savePath,onDownloadProcess: (count,total){
+      var progress = (count / total) * 100;
+      state.downloadProgress.value = progress;
+    });
+  }
 
   /*
    * @author Marinda
@@ -141,7 +183,7 @@ class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateM
                   ),
                   SizedBox(width: 50.rpx),
                   InkWell(
-                    onTap: ()=>print("下载"),
+                    onTap: ()=> downloadMusicToLocal(element),
                     child: SizedBox(
                       width: 70.rpx,
                       height: 70.rpx,
