@@ -24,4 +24,8 @@ class BaseProvider {
     print('path: ${path}');
     return Request.sendGet(path,header: header,isStream: true);
   }
+
+  static sendRequestDownload(String url,String savePath,{Map<String,dynamic>? header,dynamic data,Function? onDownloadProcess}){
+    return Request.sendDownload(url, savePath,onDownloadProcess: onDownloadProcess,header: header,data: data);
+  }
  }

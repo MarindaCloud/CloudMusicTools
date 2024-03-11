@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:music_tools/enum/request_type.dart';
 import 'package:music_tools/global/netase_music_search.dart';
 import 'package:music_tools/network/base_provider.dart';
-
+import 'package:music_tools/utils/log.dart';
 /**
  * @author Marinda
  * @date 2024/3/8 17:05
@@ -50,5 +50,16 @@ class MusicAPI{
       return searchInfoList;
     }
     return null;
+  }
+
+  /*
+   * @author Marinda
+   * @date 2024/3/11 16:48
+   * @description 下载音乐
+   */
+  static sendDownloadMusic(String url,String savePath,{Function? onDownloadProcess}) async{
+    Log.i("发送下载音乐请求：${url},保存地址为: ${savePath}");
+    var response = await BaseProvider.sendRequestDownload(url,savePath,onDownloadProcess: onDownloadProcess);
+    return response;
   }
 }

@@ -4,6 +4,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:music_tools/utils/log.dart';
+import 'package:path/path.dart' as p;
 import 'package:music_tools/components/custom_card.dart';
 import 'package:music_tools/enum/assets_enum.dart';
 import 'package:music_tools/enum/request_type.dart';
@@ -14,6 +16,7 @@ import 'package:music_tools/utils/font_rpx.dart';
 import 'package:music_tools/view/netase_music_cloud/logic.dart';
 import 'package:music_tools/view/netase_music_cloud/view.dart';
 
+import '../../utils/path_constraint.dart';
 import '../netase_music_cloud/components/music_search/logic.dart';
 import 'state.dart';
 
@@ -22,7 +25,7 @@ class IndexLogic extends GetxController with GetSingleTickerProviderStateMixin {
 
   @override
   void onInit() {
-    // test();
+    testDownload();
     initBottomInfo();
     state.contentWidget.value = buildContentWidget();
     state.controller =
@@ -54,6 +57,21 @@ class IndexLogic extends GetxController with GetSingleTickerProviderStateMixin {
     AudioPlayer player = AudioPlayer();
     player.play(UrlSource(data));
     ResponseBody response =  await BaseProvider.sendRequestStream(RequestType.normal, data,header: header);
+  }
+
+
+  /*
+   * @author Marinda
+   * @date 2024/3/11 16:44
+   * @description 测试下载
+   */
+  testDownload() async{
+    String url = "http://m801.music.126.net/20240311170411/b379823157d980ab35b8bbdb7f3116e7/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/14096409750/c03d/febc/44e4/75fd37e0a1749f30e7cb0b58cde89154.mp3";
+    var dir = await PathConstraint.getApplicationCacheDirPath();
+    String savePath = p.join(dir.path,"123.mp3");
+    await BaseProvider.sendRequestDownload(url, savePath,onDownloadProcess: (count,total){
+      Log.i('当前下载进度为: ${count / total}');
+    });
   }
 
   /*

@@ -61,6 +61,47 @@ class Request {
     }
   }
 
+  //下载
+  static Future<T> _download<T>(String url,String savePath,
+      {required String method, Map<String,dynamic>? headers,dynamic data,Function? onDownloadProcess}) async {
+    Log.i('请求地址$url');
+    Log.i('发送的数据为：$data');
+    try {
+      Options options = Options(
+        method: method,
+        headers: headers,
+      );
+      Response response = await _dio.download(url, savePath,options: options,onReceiveProgress: (count,total){
+        if(onDownloadProcess!=null){
+          onDownloadProcess(count,total);
+        }    
+      });
+      if (response.statusCode == 200) {
+        try {
+          dynamic result = true;
+          Log.i("下载成功，文件存放位置为：${savePath}");
+          return result;
+        } catch (e) {
+          Log.e('解析响应数据异常$e');
+          // LogUtil.v(e, tag: '解析响应数据异常');
+          return Future.error('解析响应数据异常');
+        }
+      } else {
+        // _handleHttpError(response.statusCode!);
+        return Future.error('HTTP错误');
+      }
+    } on DioError catch (e) {
+      Log.e('dio请求失败：$e');
+      // LogUtil.v(_dioError(e), tag: '请求异常');
+      // EasyLoading.showInfo(_dioError(e));
+      return Future.error(_dioError(e));
+    } catch (e) {
+      Log.e('请求未知异常$e');
+      // LogUtil.v(e, tag: '未知异常');
+      return Future.error('未知异常');
+    }
+  }
+
   /*
    * @author Marinda
    * @date 2024/3/8 16:40
@@ -77,6 +118,15 @@ class Request {
    */
   static Future<dynamic> sendGet(String path,{Map<String,dynamic>? header,bool? isStream}){
     return _request(path, method: "GET",headers: header,isStream: isStream);
+  }
+
+  /*
+   * @author Marinda
+   * @date 2024/3/11 16:43
+   * @description 下载请求
+   */
+  static Future<dynamic> sendDownload(String url,String savePath,{Map<String,dynamic>? header,dynamic data,Function? onDownloadProcess}){
+    return _download(url, savePath, method: "GET",headers: header,onDownloadProcess: onDownloadProcess);
   }
 
   // 处理 Dio 异常
