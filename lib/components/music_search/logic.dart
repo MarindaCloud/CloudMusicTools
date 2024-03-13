@@ -6,6 +6,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_tools/components/audio_play.dart';
+import 'package:music_tools/enum/music_type.dart';
 import 'package:music_tools/global/music_analysis_info.dart';
 import 'package:music_tools/network/api/music_api.dart';
 import 'package:music_tools/utils/font_rpx.dart';
@@ -13,23 +14,27 @@ import 'package:music_tools/utils/log.dart';
 import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
 import 'package:uuid/v4.dart';
-import '../../../../components/download_progress_bar.dart';
-import '../../../../enum/assets_enum.dart';
+import '../download_progress_bar.dart';
+import '../../enum/assets_enum.dart';
 import 'package:path_provider/path_provider.dart';
-import '../../../../global/netase_music_search.dart';
-import '../../../../network/base_provider.dart';
-import '../../../../utils/overlay_manager.dart';
-import '../../../../utils/path_constraint.dart';
+import '../../global/netase_music_search.dart';
+import '../../network/base_provider.dart';
+import '../../utils/overlay_manager.dart';
+import '../../utils/path_constraint.dart';
 import 'state.dart';
 
 class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateMixin{
 
   final MusicSearchState state = MusicSearchState();
 
+  MusicSearchLogic([MusicType type = MusicType.netase]){
+    state.musicType.value = type;
+  }
+
   @override
   void onInit() {
     state.sliderController = AnimationController(vsync: this);
-    state.sliderAnimation = Tween(begin: Offset(0,0),end: Offset(0,1)).animate(state.sliderController!);
+    state.sliderAnimation = Tween(begin: Offset(0,0),end: Offset(0,10)).animate(state.sliderController!);
     // TODO: implement onInit
     super.onInit();
   }
@@ -41,6 +46,8 @@ class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateM
     // TODO: implement onClose
     super.onClose();
   }
+
+
 
   /*
    * @author Marinda

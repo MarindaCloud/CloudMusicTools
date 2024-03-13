@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_tools/enum/assets_enum.dart';
 import 'package:music_tools/utils/font_rpx.dart';
-import 'package:music_tools/view/netase_music_cloud/components/music_search/state.dart';
+import 'package:music_tools/components/music_search/state.dart';
+import 'package:music_tools/utils/music_util.dart';
 
+import '../../enum/music_type.dart';
 import 'logic.dart';
 
 class MusicSearchPage extends StatelessWidget {
   final MusicSearchLogic logic;
   final MusicSearchState state;
-
-  MusicSearchPage({Key? key})
+  final MusicType type;
+  MusicSearchPage(this.type,{Key? key})
       :
-        logic = Get.put(MusicSearchLogic()),
+        logic = Get.put(MusicSearchLogic(type)),
         state = Get
             .find<MusicSearchLogic>()
             .state,
@@ -36,7 +38,7 @@ class MusicSearchPage extends StatelessWidget {
                   SizedBox(
                     width: 100.rpx,
                     height: 100.rpx,
-                    child: Image.asset(Assets.music.assets, fit: BoxFit.fill,),
+                    child: Image.asset(MusicUtil.getMusicTypeIcon(type), fit: BoxFit.fill,),
                   ),
                   SizedBox(width: 50.rpx),
                   Expanded(

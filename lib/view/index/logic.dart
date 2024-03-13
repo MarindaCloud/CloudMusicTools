@@ -1,27 +1,15 @@
-import 'dart:typed_data';
-
 import 'package:audioplayers/audioplayers.dart';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:music_tools/components/download_progress_bar.dart';
-import 'package:music_tools/utils/log.dart';
-import 'package:music_tools/utils/overlay_manager.dart';
-import 'package:path/path.dart' as p;
+import 'package:music_tools/components/music_view_component.dart';
+import 'package:music_tools/enum/music_type.dart';
 import 'package:music_tools/components/custom_card.dart';
 import 'package:music_tools/enum/assets_enum.dart';
 import 'package:music_tools/enum/request_type.dart';
 import 'package:music_tools/global/bottom_nav.dart';
-import 'package:music_tools/global/netase_music_search.dart';
 import 'package:music_tools/network/base_provider.dart';
 import 'package:music_tools/utils/font_rpx.dart';
-import 'package:music_tools/view/netase_music_cloud/logic.dart';
-import 'package:music_tools/view/netase_music_cloud/view.dart';
-import 'package:uuid/v4.dart';
-
-import '../../utils/path_constraint.dart';
-import '../netase_music_cloud/components/music_search/logic.dart';
 import 'state.dart';
 
 class IndexLogic extends GetxController with GetTickerProviderStateMixin {
@@ -147,13 +135,20 @@ class IndexLogic extends GetxController with GetTickerProviderStateMixin {
               children: [
                 //卡片方案布局
                 Expanded(
-                  child: CustomCard("网易云音乐解析",Assets.music.assets,()=>changeContentWidget(NetaseMusicCloudPage())),
+                  child: CustomCard("网易云音乐解析",Assets.music.assets,()=>changeContentWidget(MusicViewComponent(MusicType.netase))),
                 ),
                 SizedBox(
-                  width: 100.rpx,
+                  width: 50.rpx,
+                ),
+                //卡片方案布局
+                Expanded(
+                  child: CustomCard("QQ音乐解析",Assets.music3.assets,()=>changeContentWidget(MusicViewComponent(MusicType.qq))),
+                ),
+                SizedBox(
+                  width: 50.rpx,
                 ),
                 Expanded(
-                  child: CustomCard("全民K歌解析",Assets.music2.assets,()=>print("全民K歌"))
+                  child: CustomCard("全民K歌解析",Assets.music2.assets,()=>changeContentWidget(MusicViewComponent(MusicType.kg)))
                 ),
               ],
             ),
