@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:music_tools/enum/request_type.dart';
 import 'package:music_tools/global/netase_music_search.dart';
+import 'package:music_tools/global/qq_music_info.dart';
 import 'package:music_tools/network/base_provider.dart';
 import 'package:music_tools/utils/log.dart';
 /**
@@ -16,7 +17,7 @@ class MusicAPI{
    * @date 2024/3/8 17:09
    * @description 发送网易云解析请求
    */
-  static sendMusicAnalysis(String searchContent,String type) async{
+  static sendNeteaseMusicAnalysis(String searchContent,String type) async{
     Map<String,dynamic> headers = {
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
       "X-Requested-With": "XMLHttpRequest"
@@ -48,6 +49,37 @@ class MusicAPI{
       var searchInfoList = result.map((e) => NetaseMusicSearch.fromJson(e)).toList();
       print('搜索详情列表 ${searchInfoList.length}');
       return searchInfoList;
+    }
+    return null;
+  }
+
+  /*
+   * @author Marinda
+   * @date 2024/3/14 16:25
+   * @description 发送QQ音乐搜索
+   */
+  static sendSearchQQMusic(String content) async{
+    var response = await BaseProvider.sendRequestTypeGet(RequestType.qqMusicSearch, isPlaceHolderParse: true,data: content,header: {});
+    var result = response["data"];
+    if(result is List){
+      List<QQMusicInfo> searchInfoList = result.map((e) => QQMusicInfo.fromJson(e)).toList();
+      print('搜索详情列表 ${searchInfoList.length}');
+      return searchInfoList;
+    }
+    return [];
+  }
+
+  /*
+   * @author Marinda
+   * @date 2024/3/14 16:31
+   * @description QQ音乐解析 根据音乐ID解析
+   */
+  static Future<QQMusicInfo?> sendQQMusicAnalysis(String searchContent) async{
+    var response = await BaseProvider.sendRequestTypeGet(RequestType.qqMusicAnalysis, data: searchContent,isPlaceHolderParse: true,header: {});
+    var result = response["data"];
+    if(result is Map<String,dynamic>){
+      var searchInfo = QQMusicInfo.fromJson(result);
+      return searchInfo;
     }
     return null;
   }

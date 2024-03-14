@@ -3,7 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_tools/components/dialog_component.dart';
+import 'package:music_tools/components/music_search/logic.dart';
 import 'package:music_tools/components/music_view_component.dart';
+import 'package:music_tools/controller/music_controller/logic.dart';
 import 'package:music_tools/enum/music_type.dart';
 import 'package:music_tools/components/custom_card.dart';
 import 'package:music_tools/enum/assets_enum.dart';
@@ -24,6 +26,7 @@ import 'package:path_provider/path_provider.dart';
 
 class IndexLogic extends GetxController with GetTickerProviderStateMixin {
   final IndexState state = IndexState();
+  final MusicControllerLogic logic = Get.find<MusicControllerLogic>();
 
   @override
   void onInit() {
@@ -166,10 +169,12 @@ class IndexLogic extends GetxController with GetTickerProviderStateMixin {
    * @date 2024/3/5 17:41
    * @description 回到主页
    */
-  backIndex(){
+  backIndex() async{
     state.backFlag.value = false;
     state.navIndex.value = 1;
     state.contentWidget.value = buildContentWidget();
+    //移除音乐搜索记录
+    await Get.delete<MusicSearchLogic>();
   }
 
 
@@ -186,20 +191,20 @@ class IndexLogic extends GetxController with GetTickerProviderStateMixin {
               children: [
                 //卡片方案布局
                 Expanded(
-                  child: CustomCard("网易云音乐解析",Assets.music.assets,()=>changeContentWidget(MusicViewComponent(MusicType.netase))),
+                  child: CustomCard("网易云音乐解析",Assets.music.assets,()=>changeContentWidget(MusicViewComponent(MusicType.netase,logic.search,logic.analysis,logic.downloadMusicToLocal))),
                 ),
                 SizedBox(
                   width: 50.rpx,
                 ),
                 //卡片方案布局
                 Expanded(
-                  child: CustomCard("QQ音乐解析",Assets.music3.assets,()=>changeContentWidget(MusicViewComponent(MusicType.qq))),
+                  child: CustomCard("QQ音乐解析",Assets.music3.assets,()=>changeContentWidget(MusicViewComponent(MusicType.qq,logic.search,logic.analysis,logic.downloadMusicToLocal))),
                 ),
                 SizedBox(
                   width: 50.rpx,
                 ),
                 Expanded(
-                  child: CustomCard("全民K歌解析",Assets.music2.assets,()=>changeContentWidget(MusicViewComponent(MusicType.kg)))
+                  child: CustomCard("全民K歌解析",Assets.music2.assets,()=>changeContentWidget(MusicViewComponent(MusicType.kg,logic.search,logic.analysis,logic.downloadMusicToLocal)))
                 ),
               ],
             ),

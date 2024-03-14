@@ -13,10 +13,14 @@ class BaseProvider {
    return Request.sendPost(path, data,header: header);
   }
 
-  static sendRequestTypeGet(RequestType type,{dynamic data,Map<String,dynamic>? header}){
+  static sendRequestTypeGet(RequestType type,{dynamic data,bool isPlaceHolderParse = false,Map<String,dynamic>? header}){
     String path = "${type.path}";
     if(data != null){
       path += data;
+    }
+    //如果有占位符
+    if(isPlaceHolderParse){
+      path = type.getParsePlaceholderPath(data);
     }
    print('path: ${path}');
     return Request.sendGet(path,header: header);

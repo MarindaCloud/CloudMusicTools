@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_tools/components/audio_play.dart';
 import 'package:music_tools/enum/music_type.dart';
-import 'package:music_tools/global/music_analysis_info.dart';
+import 'package:music_tools/global/music_netease_analysis_info.dart';
+import 'package:music_tools/global/music_search_info.dart';
+import 'package:music_tools/global/qq_music_info.dart';
 import 'package:music_tools/network/api/music_api.dart';
 import 'package:music_tools/utils/font_rpx.dart';
 import 'package:music_tools/utils/log.dart';
@@ -43,6 +45,7 @@ class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateM
   void onClose() {
     state.sliderController!.dispose();
     state.sliderAnimation = null;
+    state.musicType.value = MusicType.netase;
     // TODO: implement onClose
     super.onClose();
   }
@@ -70,13 +73,13 @@ class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateM
    * @date 2024/3/11 17:47
    * @description 获取
    */
-  Future<MusicAnalysisInfo?> getAnalysisMusicInfo(NetaseMusicSearch element) async{
+  Future<MusicNeteaseInfo?> getAnalysisMusicInfo(NetaseMusicSearch element) async{
     int musicId = element.id ?? 0;
-    var response = await MusicAPI.sendMusicAnalysis(musicId.toString(), "id");
+    var response = await MusicAPI.sendNeteaseMusicAnalysis(musicId.toString(), "id");
     var result = response["data"];
     if(result is List){
-      List<MusicAnalysisInfo> list = result.map((e)=> MusicAnalysisInfo.fromJson(e)).toList();
-      MusicAnalysisInfo analysisInfo = list.first;
+      List<MusicNeteaseInfo> list = result.map((e)=> MusicNeteaseInfo.fromJson(e)).toList();
+      MusicNeteaseInfo analysisInfo = list.first;
       if(analysisInfo.url == null || analysisInfo.url == ""){
         return null;
       }
@@ -84,11 +87,6 @@ class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateM
     }
   }
 
-  /*
-   * @author Marinda
-   * @date 2024/3/11 17:36
-   * @description 下载音乐到本地
-   */
   downloadMusicToLocal(NetaseMusicSearch element) async{
     var analysisMusicInfo = await getAnalysisMusicInfo(element);
     if(analysisMusicInfo == null){
@@ -109,6 +107,32 @@ class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateM
       state.downloadProgress.value = progress;
     });
   }
+
+  /*
+   * @author Marinda
+   * @date 2024/3/11 17:36
+   * @description 下载音乐到本地
+   */
+  // downloadMusicToLocal(NetaseMusicSearch element) async{
+  //   var analysisMusicInfo = await getAnalysisMusicInfo(element);
+  //   if(analysisMusicInfo == null){
+  //     BotToast.showText(text: "该音乐解析失败！"); return;
+  //   }
+  //   String url = analysisMusicInfo.url ?? "";
+  //   if(url == null || url == "") BotToast.showText(text: "解析异常，无法下载该文件！");
+  //   var dir = await PathConstraint.getApplicationCacheDirPath();
+  //   var uuid = UuidV4();
+  //   var uFileName = uuid.generate();
+  //   String fileName = "${uFileName}.mp3";
+  //   String savePath = p.join(dir.path,fileName);
+  //   Log.i("当前保存下载文件路径为：${savePath}");
+  //   String musicName = "${element.musicInfo?.name} — ${element.author?.name}";
+  //   OverlayManager().createOverlay("downloadProgress", DownloadProgressBarComponent(musicName, state.downloadProgress,savePath));
+  //   await BaseProvider.sendRequestDownload(url, savePath,onDownloadProcess: (count,total){
+  //     var progress = (count / total) * 100;
+  //     state.downloadProgress.value = progress;
+  //   });
+  // }
 
 
   /*
@@ -131,6 +155,96 @@ class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateM
     }
     state.netaseMusicSearchList.value = list;
     Log.i("搜索结果: 共计${searchInfoList.length}");
+  }
+
+
+  /*
+   * @author Marinda
+   * @date 2024/3/14 17:04
+   * @description 获取作者名
+   */
+  String getAuthor(MusicSearchInfo searchInfo){
+    String author = "";
+    switch(state.musicType.value){
+      case MusicType.netase:
+        NetaseMusicSearch musicSearchInfo = searchInfo as NetaseMusicSearch;
+        author = musicSearchInfo.author?.name ?? "";
+        break;
+      case MusicType.qq:
+        QQMusicInfo musicSearchInfo = searchInfo as QQMusicInfo;
+        author = musicSearchInfo.name ?? "";
+        break;
+      default:
+        break;
+    }
+    return author;
+  }
+
+  /*
+   * @author Marinda
+   * @date 2024/3/14 17:04
+   * @description 获取pic
+   */
+  String getPic(MusicSearchInfo searchInfo){
+    String pic = "";
+    switch(state.musicType.value){
+      case MusicType.netase:
+        NetaseMusicSearch musicSearchInfo = searchInfo as NetaseMusicSearch;
+        pic = musicSearchInfo.musicInfo?.picUrl ?? "";
+        break;
+      case MusicType.qq:
+        QQMusicInfo musicSearchInfo = searchInfo as QQMusicInfo;
+        pic = musicSearchInfo.cover ?? "";
+        break;
+      default:
+        break;
+    }
+    return pic;
+  }
+
+
+  /*
+   * @author Marinda
+   * @date 2024/3/14 17:06
+   * @description 获取pic
+   */
+  String getMusicName(MusicSearchInfo searchInfo){
+    String name = "";
+    switch(state.musicType.value){
+      case MusicType.netase:
+        NetaseMusicSearch musicSearchInfo = searchInfo as NetaseMusicSearch;
+        name = musicSearchInfo.name ?? "";
+        break;
+      case MusicType.qq:
+        QQMusicInfo musicSearchInfo = searchInfo as QQMusicInfo;
+        name = musicSearchInfo.songname ?? "";
+        break;
+      default:
+        break;
+    }
+    return name;
+  }
+
+  /*
+   * @author Marinda
+   * @date 2024/3/14 17:11
+   * @description 获取音乐ID
+   */
+  int getMusicId(MusicSearchInfo searchInfo){
+    int musicId = 0;
+    switch(state.musicType.value){
+      case MusicType.netase:
+        NetaseMusicSearch musicSearchInfo = searchInfo as NetaseMusicSearch;
+        musicId = musicSearchInfo.id ?? -1;
+        break;
+      case MusicType.qq:
+        QQMusicInfo musicSearchInfo = searchInfo as QQMusicInfo;
+        musicId = musicSearchInfo.songid ?? -1;
+        break;
+      default:
+        break;
+    }
+    return musicId;
   }
 
   buildSearchResult(){

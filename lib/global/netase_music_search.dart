@@ -1,4 +1,10 @@
-class NetaseMusicSearch {
+import 'package:music_tools/global/music_search_info.dart';
+/**
+ * @author Marinda
+ * @date 2024/3/14 16:21
+ * @description  网易云音乐搜索结果
+ */
+class NetaseMusicSearch extends MusicSearchInfo{
   String? name;
   int? id;
   Author? author;

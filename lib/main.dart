@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:music_tools/controller/music_controller/logic.dart';
 import 'package:music_tools/global/app_pages.dart';
 import 'package:music_tools/utils/font_rpx.dart';
 import 'package:music_tools/utils/log.dart';
@@ -61,4 +62,5 @@ initSetting() async{
   ]);
   await GetStorage.init();
   Get.put(OverlayManager());
+  Get.put(MusicControllerLogic());
 }

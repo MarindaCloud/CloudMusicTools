@@ -13,7 +13,10 @@ import '../../enum/assets_enum.dart';
  */
 class MusicViewComponent extends StatelessWidget {
   MusicType musicType;
-  MusicViewComponent (this.musicType,{Key? key}) : super(key: key);
+  Function searchFunction;
+  Function analysisFunction;
+  Function downloadFunction;
+  MusicViewComponent(this.musicType,this.searchFunction,this.analysisFunction,this.downloadFunction,{Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +56,7 @@ class MusicViewComponent extends StatelessWidget {
                 children: [
                   // if(state.showSearch.value)
                   Expanded(
-                    child: MusicSearchPage(musicType),
+                    child: MusicSearchPage(musicType,searchFunction,analysisFunction,downloadFunction),
                   ), //卡片方案布局
                 ],
               ),
