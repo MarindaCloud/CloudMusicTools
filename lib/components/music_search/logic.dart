@@ -110,6 +110,7 @@ class MusicSearchLogic extends GetxController with GetSingleTickerProviderStateM
     });
   }
 
+
   /*
    * @author Marinda
    * @date 2024/3/8 17:14

@@ -2,15 +2,25 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:music_tools/components/dialog_component.dart';
 import 'package:music_tools/components/music_view_component.dart';
 import 'package:music_tools/enum/music_type.dart';
 import 'package:music_tools/components/custom_card.dart';
 import 'package:music_tools/enum/assets_enum.dart';
 import 'package:music_tools/enum/request_type.dart';
 import 'package:music_tools/global/bottom_nav.dart';
+import 'package:music_tools/global/version_info.dart';
+import 'package:music_tools/network/api/version_api.dart';
 import 'package:music_tools/network/base_provider.dart';
+import 'package:music_tools/utils/common_util.dart';
 import 'package:music_tools/utils/font_rpx.dart';
+import 'package:music_tools/utils/log.dart';
+import 'package:music_tools/utils/overlay_manager.dart';
+import 'package:music_tools/utils/path_constraint.dart';
+import '../../components/download_progress_bar.dart';
 import 'state.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 class IndexLogic extends GetxController with GetTickerProviderStateMixin {
   final IndexState state = IndexState();
@@ -23,6 +33,7 @@ class IndexLogic extends GetxController with GetTickerProviderStateMixin {
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     state.animation = Tween(begin: Offset(-Get.width, 0), end: Offset(0, 0))
         .animate(state.controller!);
+
     // TODO: implement onInit
     super.onInit();
   }
@@ -30,9 +41,49 @@ class IndexLogic extends GetxController with GetTickerProviderStateMixin {
 
   @override
   void onReady() {
+    autoUpdate();
+    super.onReady();
     testDownload();
 
   }
+
+
+  /*
+   * @author Marinda
+   * @date 2024/3/14 13:55
+   * @description 自动更新
+   */
+  autoUpdate() async{
+    String currentVersion = await CommonUtil.getVersion();
+    VersionInfo versionInfo = await VersionAPI.getNewVersionInfo();
+    String newVersion = versionInfo?.version ?? "";
+    state.versionInfo = versionInfo;
+    if(currentVersion!=newVersion){
+      OverlayManager().createOverlay("dialogComponent", DialogComponent("自动更新", "最新版本为v1.0.4,是否需要自动更新",updateClient));
+    }
+    Log.i("当前版本: ${currentVersion},最新版本：${versionInfo.version}");
+  }
+  
+  /*
+   * @author Marinda
+   * @date 2024/3/14 15:15
+   * @description 更新客户端
+   */
+  updateClient() async{
+    VersionInfo versionInfo = state.versionInfo;
+    String url = versionInfo.url ??"";
+    var dir = await PathConstraint.getBaseDirPath();
+    String fileName = url.substring(url.lastIndexOf("/")+1);
+    String savePath = p.join(dir.path,fileName);
+    Log.i("客户端保存地址：${savePath}");
+    OverlayManager().removeOverlay("dialogComponent");
+    OverlayManager().createOverlay("downloadProgress", DownloadProgressBarComponent("客户端", state.downloadProgress,savePath,isAutoOpen: true,));
+    await VersionAPI.downloadNewClient(versionInfo, savePath,onDownloadProcess: (count,total){
+        var progress = (count / total) * 100;
+        state.downloadProgress.value = progress;
+    });
+  }
+
 
   initBottomInfo() {
     state.bottomNavInfoList = [
@@ -53,7 +104,7 @@ class IndexLogic extends GetxController with GetTickerProviderStateMixin {
     };
     AudioPlayer player = AudioPlayer();
     player.play(UrlSource(data));
-    ResponseBody response =  await BaseProvider.sendRequestStream(RequestType.normal, data,header: header);
+    ResponseBody response =  await BaseProvider.sendRequestStream(RequestType.normal,data: data,header: header);
   }
 
 

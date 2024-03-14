@@ -8,18 +8,21 @@ import 'package:music_tools/network/request.dart';
  */
 class BaseProvider {
 
-  static sendRequestTypePost(RequestType type,dynamic data,{Map<String,dynamic>? header}){
+  static sendRequestTypePost(RequestType type,{dynamic data,Map<String,dynamic>? header}){
    String path = type.path;
    return Request.sendPost(path, data,header: header);
   }
 
-  static sendRequestTypeGet(RequestType type,dynamic data,{Map<String,dynamic>? header}){
-   String path = "${type.path}${data}";
+  static sendRequestTypeGet(RequestType type,{dynamic data,Map<String,dynamic>? header}){
+    String path = "${type.path}";
+    if(data != null){
+      path += data;
+    }
    print('path: ${path}');
     return Request.sendGet(path,header: header);
   }
 
-  static sendRequestStream(RequestType type,dynamic data,{Map<String,dynamic>? header}){
+  static sendRequestStream(RequestType type,{dynamic data,Map<String,dynamic>? header}){
     String path = "${type.path}${data}";
     print('path: ${path}');
     return Request.sendGet(path,header: header,isStream: true);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_tools/utils/font_rpx.dart';
 import 'package:dashed_circular_progress_bar/dashed_circular_progress_bar.dart';
+import 'package:music_tools/utils/log.dart';
 import 'package:music_tools/utils/overlay_manager.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 
@@ -16,7 +17,8 @@ class DownloadProgressBarComponent extends StatefulWidget {
   final RxDouble progress;
   final String title;
   final String savePath;
-  DownloadProgressBarComponent(this.title, this.progress,this.savePath);
+  final bool? isAutoOpen;
+  DownloadProgressBarComponent(this.title, this.progress,this.savePath,{this.isAutoOpen});
 
   @override
   State<StatefulWidget> createState() {
@@ -76,6 +78,7 @@ class ProgressBarComponentState extends State<DownloadProgressBarComponent>
       return;
     }
     await OpenFile.open(widget.savePath);
+    Log.i("打开下载文件！");
   }
 
   @override
@@ -145,6 +148,13 @@ class ProgressBarComponentState extends State<DownloadProgressBarComponent>
                         seekSize: 6,
                         seekColor: const Color(0xffeeeeee),
                         animation: true,
+                        onAnimationEnd: () async{
+                          Log.i("动画结束！");
+                          Log.i("open: ${widget.isAutoOpen}");
+                          if(widget.isAutoOpen == true){
+                            await openSource();
+                          }
+                        },
                         child: Center(
                           child: ValueListenableBuilder(
                             valueListenable: _valueNotifier!,

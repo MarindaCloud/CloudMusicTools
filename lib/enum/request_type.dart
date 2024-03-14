@@ -6,7 +6,8 @@
 enum RequestType{
   netaseMusicSearch("http://music.163.com/api/search/pc"),
   musicAnalysis("https://daga.cc/yue/"),
-  normal("");
+  normal(""),
+  newVersion("http://175.24.177.189/api/verifyVersion.php");
   const RequestType(this.path);
   final String path;
 }

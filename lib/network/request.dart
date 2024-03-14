@@ -13,8 +13,8 @@ import '../utils/log.dart';
 class Request {
   // 配置 Dio 实例
   static final BaseOptions _options = BaseOptions(
-    connectTimeout: 10000,
-    receiveTimeout: 10000,
+    connectTimeout: 10000000,
+    receiveTimeout: 10000000,
   );
 
   // 创建 Dio 实例
@@ -78,9 +78,8 @@ class Request {
       });
       if (response.statusCode == 200) {
         try {
-          dynamic result = true;
           Log.i("下载成功，文件存放位置为：${savePath}");
-          return result;
+          return response.data;
         } catch (e) {
           Log.e('解析响应数据异常$e');
           // LogUtil.v(e, tag: '解析响应数据异常');
